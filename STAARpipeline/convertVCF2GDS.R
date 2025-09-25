@@ -8,7 +8,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 print(args)
 import.format <- args[1] # characters, the variable name(s) in the FORMAT field for import; or NULL for all variables
-fileformat <- args[2] # either 'vcf' or 'bcf'
+fileformat <- args[2] # either 'vcf' or 'bcf' (or 'bed')
 base.filename <- args[3] # output GDS file name
 num.files <- as.numeric(args[4]) # number of input VCF files
 vcf.file <- args[5:(5+num.files-1)] # input VCF file names
@@ -29,15 +29,20 @@ library(SeqArray)
 #Sys.setenv(MKL_NUM_THREADS=nThreads)
 
 
-if(fileformat == 'bcf'){
-    ## is this a bcf file?
-    ## use bcftools to read text
-    message("converting BCF")
-    message("BCF always single thread")
+if (fileformat == 'bcf') {
+        ## is this a bcf file?
+        ## use bcftools to read text
+        message("converting BCF")
+        message("BCF always single thread")
 	seqBCF2GDS(vcf.file,gds.file,fmt.import=import.format, storage.option="LZMA_RA",bcftools="bcftools")
-}else{
+} else if (fileformat == 'vcf') {
     message("converting VCF")
 	seqVCF2GDS(vcf.file,gds.file,fmt.import=import.format, storage.option="LZMA_RA")  #,parallel=nThreads)
+} else if (fileformat == 'bed') {
+	message("converting BED")
+	seqBED2GDS(vcf.file,gds.file,fmt.import=import.format, storage.option="LZMA_RA")  #,parallel=nThreads)
+} else {
+	stop("file format must be 'bcf', 'vcf', or 'bed'")
 }
 # Quick summary for log's sake
 g <- seqOpen(gds.file)

@@ -22,6 +22,7 @@ res_savedir=${basedir}/${savedir}${subdir} #${dir_geno}
 # Parameters to some STAAR scripts:
 # Allele frequency and count cutoffs,
 # and variant type (set to 'variant' to include both SNVs and indels)
+format_convert_to_gds=vcf
 af_thresh=0.01
 mac_cutoff=20
 var_type=variant  # SNV  # Indel
@@ -55,10 +56,10 @@ echo For project $savedir
 # # Setup (These are run via 'run_staar_wrapper.sh')
 # create gds files
 # NOTE: this default script from STAARpipeline-Tutorial was created to convert vcf to gds and uses the seqVCF2GDS function
-# from the SeqArray package, but it could be modified to use the seqBED2GDS function from the same package instead
+# from the SeqArray package. I have included the seqBED2GDS function from the same package to convert BED files from PLINK as well
 if [[ $1 == "gds" ]]; then
 	echo Creating GDS file for chrom $arrid
-	Rscript ${scriptdir}/STAARpipeline/convertVCF2GDS.R NULL vcf ${dir_geno}/${savegdsprefix}${arrid} 1 ${vcfdir}/*chr${arrid}.*vcf.gz
+	Rscript ${scriptdir}/STAARpipeline/convertVCF2GDS.R NULL ${format_convert_to_gds} ${dir_geno}/${savegdsprefix}${arrid} 1 ${vcfdir}/*chr${arrid}.*vcf.gz
 fi
 
 # create variant list files
