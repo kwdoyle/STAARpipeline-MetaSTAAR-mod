@@ -40,6 +40,9 @@ to be placed somewhere on your system (e.g., in a "GRM" subdirectory within your
 \
 Once the paths are updated within `Seq2BED_wrapper.sh`, this script can be run via: \
 `qsub ./run_Seq2BED_wrapper.sh` \
+BED files are then combined, following steps from FastSparseGRM, via: \
+`bash ./merge_beds.sh` \
+\
 Once BED files are created, each step of the GRM-creation pipeline in `grm_pipeline.sh` can be run as follows: \
 `bash ./grm_pipeline.sh king` \
 `bash ./grm_pipeline.sh divergence` \
