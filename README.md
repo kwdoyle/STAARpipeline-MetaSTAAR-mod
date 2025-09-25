@@ -34,6 +34,18 @@ Then each of the following steps can be run:
 ## Annotate gds file (create "agds")
 `qsub ./run_staar_wrapper.sh agds`
 
+## Create Genetic Relatedness Matrix (GRM)
+This step requires the functions and executables from https://github.com/rounakdey/FastSparseGRM/tree/main/extdata \
+to be placed somewhere on your system (e.g., in a "GRM" subdirectory within your project). \
+\
+Once the paths are updated within `Seq2BED_wrapper.sh`, this script can be run via: \
+`qsub ./run_Seq2BED_wrapper.sh` \
+Once BED files are created, each step of the GRM-creation pipeline in `grm_pipeline.sh` can be run as follows: \
+`bash ./grm_pipeline.sh king` \
+`bash ./grm_pipeline.sh divergence` \
+`bash ./grm_pipeline.sh unrelated` \
+`...`
+
 ## Run "prestep"
 `bash ./staar_wrapper.sh prestep`
 
