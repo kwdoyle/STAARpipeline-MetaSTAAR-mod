@@ -18,7 +18,8 @@ Some pre-step commands can be run without job submission: \
 *(Note: there is effectively no difference between run_staar_wrapper.sh and the batch scripts supplied in batch_jobs. \
 run_staar_wrapper.sh was created before the scripts from batch_jobs from STAARpipeline-Tutorial and MetaSTAARlite-Tutorial were used)* \
 \
-Before running `staar_wrapper.sh`, modify the input parameters in this script to correspond to the project name, where to save output to, etc.
+Before running `staar_wrapper.sh`, modify the input parameters in this script to correspond to the project name, where to save output to, etc.\
+`makeenv2.sh` should also be modified to include relevant paths for your system. \
 Then each of the following steps can be run:
 
 # STAARpipeline Pre-Steps (following those from STAARpipeline-Tutorial):
