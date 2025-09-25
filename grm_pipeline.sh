@@ -1,10 +1,6 @@
-#flprefix=${flprefix}
-#flprefix=10k_chr_all
-#flprefix=10k_10th_pcnt_telo_case_chr_all
 flprefix=topmed_chr_all
-#basedir=~/noncoding_telo/STAAR/TOPMed_Peddy_Euro/GRM/
-#basedir=~/noncoding_telo/STAAR/10k_Cohort/GRM/
-#basedir=~/noncoding_telo/STAAR/10k_Cohort/Telomere_Analysis_new/GRM/
+# 'basedir' is path where scripts and executables from FastSparseGRM/extdata/ are placed
+# (https://github.com/rounakdey/FastSparseGRM/)
 basedir=~/noncoding_telo/STAAR/TOPMed_Full_Cohort_grm/GRM/
 savedir=${basedir}/output/
 
