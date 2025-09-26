@@ -4,7 +4,7 @@ This repo functions as an all-encompasing wrapper around both the STAARpipeline-
 The progression of steps run here mirrors the same steps from both of these repositories, easily facilitating them through `staar_wrapper.sh` \
 \
 Note that most steps of this analysis are meant to be run on a job-submission cluster. The current code is set to run array jobs on a Sun Grid Engine cluster (as seen in `run_staar_wrapper.sh` 
-and all scripts in the `batch jobs` directories, but this can be modified to suit whichever cluster of your choosing. \
+and all scripts in the `batch jobs` directories), but this can be modified to suit whichever cluster of your choosing. \
 \
 Commands will be submitted to your cluster like so: \
 `qsub ./run_staar_wrapper.sh [argument]` \
@@ -48,7 +48,8 @@ Once BED files are created, each step of the GRM-creation pipeline in `grm_pipel
 `bash ./grm_pipeline.sh king` \
 `bash ./grm_pipeline.sh divergence` \
 `bash ./grm_pipeline.sh unrelated` \
-`...`
+`...` \
+`bash ./grm_pipeline.sh grm`
 
 ## Run "prestep"
 `bash ./staar_wrapper.sh prestep`
