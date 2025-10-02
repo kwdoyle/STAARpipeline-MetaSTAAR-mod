@@ -55,21 +55,30 @@ Annotation_name <- c("CADD","LINSIGHT","FATHMM.XF","aPC.EpigeneticActive","aPC.E
 ## filter for those only with ref and alt
 #known_loci <- unique(gwas_hits[!is.na(gwas_hits$true_major), c("CHR", "POS", "true_major", "true_minor")])
 #names(known_loci)[3:4] <- c("REF", "ALT")
+
 # Use only gwas hits present in both cohorts
-known_loci <- read.table("~/noncoding_telo/STAAR/gwas_hits_shared_disc_tm.tsv")
-names(known_loci) <- c("CHR", "POS", "REF", "ALT")
+#known_loci <- read.table("~/noncoding_telo/STAAR/gwas_hits_shared_disc_tm.tsv")
+#names(known_loci) <- c("CHR", "POS", "REF", "ALT")
+
+# Now use variants from coding hits, found in both cohorts, to adjust the sig noncoding hits
+# that have a coding hit nearby
+known_loci <- read.csv("/efs/garcia/users/kd2630/gene_category_matching_variants_disc_tm.csv")
 
 #known_loci_11 <- known_loci[known_loci$CHR == 11, ]
 #known_loci_9 <- known_loci[known_loci$CHR == 9, ]
 
 # Perform the below for every significant hit
-sighits <- read.csv("~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Noncoding_Meta_Analysis/noncoding_sig.csv")
-sighits_filt <- sighits[sighits$MetaSTAAR.O < 3.57E-07 & sighits$X.SNV > 10, ]
-sighits_filt <- sighits_filt[order(sighits_filt$MetaSTAAR.O), ]
-sighits_nms <- unique(sighits_filt[, c("Gene.name", "Chr")])
-# temporary mod to only analyze DOCK2
-gwas_gene_snps_use <- "TERT"  #"SPDL1"  #"TERT"
-sighits_nms <- sighits_nms[sighits_nms$Gene.name == "DOCK2", ]
+#sighits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Noncoding_Meta_Analysis/noncoding_sig.csv")
+#sighits_filt <- sighits[sighits$MetaSTAAR.O < 3.57E-07 & sighits$X.SNV > 10, ]
+#sighits_filt <- sighits_filt[order(sighits_filt$MetaSTAAR.O), ]
+#sighits_nms <- unique(sighits_filt[, c("Gene.name", "Chr")])
+## temporary mod to only analyze DOCK2
+#gwas_gene_snps_use <- "TERT"  #"SPDL1"  #"TERT"
+#sighits_nms <- sighits_nms[sighits_nms$Gene.name == "DOCK2", ]
+
+# Now do this for noncoding hits with a coding hit nearby
+sighits <- read.csv("/efs/garcia/users/kd2630/MetaSTAAR_noncoding_with_nearby_coding_hit.csv")
+sighits_nms <- unique(sighits[ ,c("Gene.name", "Chr")])
 
 ### output path
 #output_path <- "/path_to_the_output_file/"
@@ -82,8 +91,10 @@ sighits_nms <- sighits_nms[sighits_nms$Gene.name == "DOCK2", ]
 #outdirnm <- "/Gene_Centric_Noncoding_Cond_gwashits/" 
 #outdirnm <- "/Gene_Centric_Noncoding_NotCond_gwashits/" 
 # For DOCK2 separately for TERT and SPDL1 variants
-outdirnm <- "/Gene_Centric_Noncoding_Cond_gwashits_DOCK2_on_TERT_gwas/" 
+#outdirnm <- "/Gene_Centric_Noncoding_Cond_gwashits_DOCK2_on_TERT_gwas/" 
 #outdirnm <- "/Gene_Centric_Noncoding_Cond_gwashits_DOCK2_on_SPDL1_gwas/" 
+# For noncoding hits cond on coding hit variants
+outdirnm <- "/Gene_Centric_Noncoding_Cond_codinghits/" 
 
 output_path <- paste0(resdir, "/", outdirnm)
 print(paste("Will create directory:", output_path))
@@ -115,13 +126,15 @@ for (i in 1:nrow(sighits_nms)) {
 	genofile <- seqOpen(agds.path)
 
 	# Subset known_loci for the current chr
-	known_loci_chr <- known_loci[known_loci$CHR == chr, ]
+	#known_loci_chr <- known_loci[known_loci$CHR == chr, ]
+	# subset for gene too when conditioning on coding hit variants
+	known_loci_chr <- known_loci[known_loci$CHR == chr & known_loci$gene == gene_name, ]
 	# temp mod to condition only on TERT and SPDL1 gwas hits separately
-	if (gwas_gene_snps_use == "TERT") {
-		known_loci_chr <- known_loci_chr[dplyr::between(known_loci_chr$POS, 1200000, 1300000), ]
-	} else if (gwas_gene_snps_use == "SPDL1") { 
-		known_loci_chr <- known_loci_chr[known_loci_chr$POS > 100000000, ]
-	}
+#	if (gwas_gene_snps_use == "TERT") {
+#		known_loci_chr <- known_loci_chr[dplyr::between(known_loci_chr$POS, 1200000, 1300000), ]
+#	} else if (gwas_gene_snps_use == "SPDL1") { 
+#		known_loci_chr <- known_loci_chr[known_loci_chr$POS > 100000000, ]
+#	}
 
 	print("Conditioning on variants:")
 	print(known_loci_chr)
