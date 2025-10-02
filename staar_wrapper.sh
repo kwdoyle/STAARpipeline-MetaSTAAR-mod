@@ -40,7 +40,7 @@ prestep_out=${dir_geno}/"/AssociationAnalysisPrestep/"
 # Use the 'all' model for discovery:
 null_model_fl=${dir_geno}/"staar_null_model/obj_nullmodel_All_rm_qv.Rdata"
 # For TOPMed:
-# #null_model_fl=${dir_geno}/"staar_null_model/obj_nullmodel.Rdata"
+#null_model_fl=${dir_geno}/"staar_null_model/obj_nullmodel.Rdata"
 
 # Names of output directories for each analysis
 indivdir=/Individual_Variant_Analysis/
@@ -150,6 +150,11 @@ fi
 if [[ $1 == "individual_meta" ]]; then
 	echo Running individual variant meta analysis for array id $arrid
 	Rscript ${scriptdir}/MetaSTAAR/MetaSTAARlite_Individual_Analysis.r ${arrid}
+fi
+
+if [[ $1 == "coding_meta" ]]; then
+	echo Running gene-centric coding meta analysis for array id $arrid
+	Rscript ${scriptdir}/MetaSTAAR/MetaSTAARlite_Gene_Centric_Coding.r ${arrid}
 fi
 
 if [[ $1 == "noncoding_meta" ]]; then
