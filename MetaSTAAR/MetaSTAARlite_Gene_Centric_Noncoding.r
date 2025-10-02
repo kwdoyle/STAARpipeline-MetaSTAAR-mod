@@ -11,8 +11,8 @@ library(MetaSTAARlite)
 #           User Input
 ###########################################################
 ## Directories of the study-specific summary statistics file folders
-file.dir <- c("~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Noncoding_Analysis/",
-              "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Noncoding_Analysis/")
+file.dir <- c("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Noncoding_Analysis/",
+              "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Noncoding_Analysis/")
 file.prefix <- c("10k_Cohort_rm_telo_qv_Gene_Noncoding_Analysis","TOPMed_Full_Cohort_grm_Gene_Noncoding_Analysis")
 ## Sample sizes of participating studies
 sample.sizes <- c(3602, 6207)
@@ -28,7 +28,7 @@ Annotation_name <- c("CADD","LINSIGHT","FATHMM.XF","aPC.EpigeneticActive","aPC.E
                      "aPC.Conservation","aPC.LocalDiversity","aPC.Mappability","aPC.TF","aPC.Protein")
 
 ## output path
-output_path <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Noncoding_Meta_Analysis/"
+output_path <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Noncoding_Meta_Analysis/"
 dir.create(output_path, recursive=T, showWarnings=F)
 ## output file name
 output_file_name <- "noncodingMeta"
