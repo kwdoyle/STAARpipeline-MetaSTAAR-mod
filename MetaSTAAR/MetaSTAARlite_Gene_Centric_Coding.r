@@ -11,16 +11,16 @@ library(MetaSTAARlite)
 #           User Input
 ###########################################################
 ## Directories of the study-specific summary statistics file folders
-file.dir <- c("/path_to_JHS_coding/",
-              "/path_to_MESA_coding/")
-file.prefix <- c("JHS_coding","MESA_coding")
+file.dir <- c("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Coding_Analysis/",
+              "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Coding_Analysis/")
+file.prefix <- c("10k_Cohort_rm_telo_qv_Gene_Coding_Analysis","TOPMed_Full_Cohort_grm_Gene_Coding_Analysis")
 ## Sample sizes of participating studies
-sample.sizes <- c(2923,4791)
+sample.sizes <- c(3602, 6207)
 
 ## variant_type
-variant_type <- "SNV"
+variant_type <- "variant"
 ## cov_maf_cutoff
-cov_maf_cutoff <- c(0.05,0.05)
+cov_maf_cutoff <- c(0.05, 0.05)
 
 ## Use_annotation_weights
 Use_annotation_weights <- TRUE
@@ -29,9 +29,10 @@ Annotation_name <- c("CADD","LINSIGHT","FATHMM.XF","aPC.EpigeneticActive","aPC.E
                      "aPC.Conservation","aPC.LocalDiversity","aPC.Mappability","aPC.TF","aPC.Protein")
 
 ## output path
-output_path <- "/path_to_the_output_file/"
+output_path <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Coding_Meta_Analysis/"
+dir.create(output_path, recursive=T, showWarnings=F)
 ## output file name
-output_file_name <- "coding"
+output_file_name <- "codingMeta"
 ## input array id from batch file
 arrayid <- as.numeric(commandArgs(TRUE)[1])
 
