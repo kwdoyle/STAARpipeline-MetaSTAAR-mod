@@ -22,6 +22,7 @@ res_savedir=${basedir}/${savedir}${subdir} #${dir_geno}
 # Parameters to some STAAR scripts:
 # Allele frequency and count cutoffs,
 # and variant type (set to 'variant' to include both SNVs and indels)
+vcfdir=/path/to/vcf/files/
 format_convert_to_gds=vcf
 af_thresh=0.01
 mac_cutoff=20
