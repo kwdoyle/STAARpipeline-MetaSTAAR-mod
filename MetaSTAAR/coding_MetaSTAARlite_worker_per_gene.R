@@ -7,17 +7,24 @@ library(MetaSTAAR)
 library(MetaSTAARlite)
 
 # TODO set the params from main bash script and run and save for discovery and topmed
+basedir <- commandArgs(TRUE)[1]
+resdir <- commandArgs(TRUE)[2]
+outdirnm <- commandArgs(TRUE)[3]
+afthresh <- as.numeric(commandArgs(TRUE)[4])
+variant_type <- commandArgs(TRUE)[5]
+nullmodeldir <- commandArgs(TRUE)[6]
 
 # For testing: (eventually will be passed to this script like the others in staar_wrapper.sh)
-basedir="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/"
-resdir="~/noncoding_telo/STAAR//MetaSTAAR_Discovery_TOPMed//Discovery/"
-afthresh=0.01
-variant_type="variant"
-# TODO this will eventually instead point to the directory with all the null models pertaining to whichever
-# model is adjusted for the current gene of interest
-# (e.g., if adjusting the coding hit in GOT2, then this will be the null model with the params for 'has_variant_in_GOT2_[noncoding category]'
-#nullmodelfl="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/staar_null_model/obj_nullmodel_All_rm_qv.Rdata"
-nullmodeldir="/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+#basedir="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/"
+#resdir="~/noncoding_telo/STAAR//MetaSTAAR_Discovery_TOPMed//Discovery/"
+#afthresh=0.01
+#variant_type="variant"
+## TODO this will eventually instead point to the directory with all the null models pertaining to whichever
+## model is adjusted for the current gene of interest
+## (e.g., if adjusting the coding hit in GOT2, then this will be the null model with the params for 'has_variant_in_GOT2_[noncoding category]'
+##nullmodelfl="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/staar_null_model/obj_nullmodel_All_rm_qv.Rdata"
+#nullmodeldir="/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+
 nullmodelfls <- list.files(nullmodeldir, pattern="*nullmodel.Rdata", full.names=T)
 # subset for current cohort 
 if (grepl("discovery", basename(resdir), ignore.case=T)) {
@@ -60,6 +67,18 @@ Use_annotation_weights <- TRUE
 Annotation_name <- c("CADD","LINSIGHT","FATHMM.XF","aPC.EpigeneticActive","aPC.EpigeneticRepressed","aPC.EpigeneticTranscription",
                      "aPC.Conservation","aPC.LocalDiversity","aPC.Mappability","aPC.TF","aPC.Protein")
 
+## output path
+output_path <- paste0(resdir, "/", outdirnm)
+print(paste("Will create directory:", output_path))
+dir.create(output_path, recursive=TRUE)
+## output file name
+pthsplt <- unlist(strsplit(basedir, "\\/"))
+nmuse <- pthsplt[length(pthsplt)]
+output_file_name <- paste0(nmuse, "_Gene_Coding_Analysis")
+print(paste("Output file name is", output_file_name))
+
+
+# # Main function
 coding_sumstat <- list()
 coding_cov <- list()
 for (i in 1:nrow(hits_use_tbl)) {
@@ -73,6 +92,7 @@ for (i in 1:nrow(hits_use_tbl)) {
 
 	# get null model for current gene
 	null_model_gn <- grep(paste0("_", gene_name, "_"), nullmodelfls, value=T)
+	print(paste("Using null model:", null_model_gn))
 	obj_nullmodel <- get(load(paste0(null_model_gn))) 
 
 	## aGDS file
