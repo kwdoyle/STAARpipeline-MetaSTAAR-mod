@@ -46,13 +46,41 @@ colnames(sgrm) <- gsub("0_", "", colnames(sgrm))
 #           Main Function 
 ###########################################################
 ## fit null model
+
+# new: dynamically create model formula using whichever 'has_vnt_in' columns are present
+fixed_covariates <- c("Age", "Sex", paste0("PC", 1:10))
+vnt_cols <- grep("^has_vnt_in_", names(phenotype), value = TRUE)
+# combine
+predictors <- c(fixed_covariates, vnt_cols)
+
+form <- as.formula(paste("is_IPF ~", paste(predictors, collapse = " + ")))
+
+obj_nullmodel <- fit_nullmodel(form, 
+                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
+                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
+
+
+# old:
 #obj_nullmodel <- fit_nullmodel(is_IPF~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10, 
 #                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
 #                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
 
-obj_nullmodel <- fit_nullmodel(is_IPF~Age+Sex+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10,  #+as.factor(rs35705950), 
-                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
-                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
+# test
+#obj_nullmodel <- fit_nullmodel(is_IPF~Age+Sex+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10 + has_vnt_in_GOT2_promoter_CAGE + has_vnt_in_GOT2_enhancer_CAGE, 
+#                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
+#                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
+
+# previous latest way:
+#obj_nullmodel <- fit_nullmodel(is_IPF~Age+Sex+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10,  #+as.factor(rs35705950), 
+#                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
+#                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
+
+# adjusting gene-centric coding output on presense of any noncoding variant in same gene
+#obj_nullmodel <- fit_nullmodel(is_IPF~Age+Sex+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+ 
+#			       has_vnt_in_ARL2_promoter_CAGE + has_vnt_in_GOT2_promoter_CAGE + has_vnt_in_GOT2_enhancer_CAGE +
+#			       has_vnt_in_P3H3_promoter_DHS + has_vnt_in_SAMD9L_upstream + has_vnt_in_SAMD9L_promoter_DHS + has_vnt_in_SAMD9L_enhancer_DHS,
+#                               data=phenotype, kins=sgrm, use_sparse=TRUE, kins_cutoff=0.022, id="sample.id",
+#                               groups=NULL, family=binomial(link="logit"), verbose=TRUE)
 
 
 
