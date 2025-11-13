@@ -39,17 +39,19 @@ if (grepl("discovery", basename(resdir), ignore.case=T)) {
 
 # eventually use all genes from here with in_coding_and_noncoding = TRUE
 # note: not sure how sheet 2 is different; don't know what christine did to make this sheet
-hits <- readxl::read_xlsx("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx", sheet=1)
+#hits <- readxl::read_xlsx("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx", sheet=1)
+hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
 # this has 795 genes. Will need to limit this down somehow (whatever was done to make sheet 2?)
-hits_use <- hits[hits$in_coding_and_noncoding == TRUE, ]
+#hits_use <- hits[hits$in_coding_and_noncoding == TRUE, ]
 # for now, just select the main ones I'm working with
-genes_chk_tmp <- c("GOT2", "SAMD9L", "ARL2", "ARL2-SNX15", "P3H3")
+#genes_chk_tmp <- c("GOT2", "SAMD9L", "ARL2", "ARL2-SNX15", "P3H3")
 #hits_use <- hits_use[hits_use$`Gene name` %in% c("GOT2", "SAMD9L", "ARL2", "ARL2-SNX15", "P3H3"), ]
-hits_use <- hits_use[grep(paste(genes_chk_tmp, collapse="|"), hits_use$`Gene name`), ]
+#hits_use <- hits_use[grep(paste(genes_chk_tmp, collapse="|"), hits_use$`Gene name`), ]
+hits_use <- hits
 
 # only need gene and chr
 # Note: ALR2-SNX15 isn't tested here b/c specifically for SNX15, there is no corresponding coding and noncoding hit together.
-hits_use_tbl <- unique(hits_use[,c("Gene name", "Chr")])
+hits_use_tbl <- unique(hits_use[,c("Gene.name", "Chr")])
 
 
 agds_dir <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/agds_dir.Rdata")))
@@ -83,7 +85,7 @@ coding_sumstat <- list()
 coding_cov <- list()
 for (i in 1:nrow(hits_use_tbl)) {
 	chr <- hits_use_tbl$Chr[i]
-	gene_name <- hits_use_tbl$`Gene name`[i]
+	gene_name <- hits_use_tbl$Gene.name[i]
 	print(paste(gene_name, "Chr:",  chr, sep=" "))
 	# genes_info is a built-in data frame from STAAR
 	#genes_info_chr <- genes_info[genes_info[,2]==chr,]

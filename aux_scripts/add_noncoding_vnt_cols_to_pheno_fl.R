@@ -5,10 +5,10 @@ library(dplyr)
 # from MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx
 # where in_coding_and_noncoding is TRUE
 
-phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/discovery_cohort_844_controls_rm_telo_gene_carriers_input_model_data.csv"
-vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_discovery.csv", row.names=1)
-#phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//TOPMed_Full_Cohort_grm/topmed_input_model_data_rv_rm.csv"
-#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_topmed.csv", row.names=1)
+#phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/discovery_cohort_844_controls_rm_telo_gene_carriers_input_model_data.csv"
+#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_discovery.csv", row.names=1)
+phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//TOPMed_Full_Cohort_grm/topmed_input_model_data_rv_rm.csv"
+vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_topmed.csv", row.names=1)
 
 savedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
 dir.create(savedir, showWarnings=F)
@@ -17,9 +17,10 @@ phen <- read.csv(phenfl)
 
 #genes_include <- c("GOT2", "SAMD9L", "C1QB", "ARL2", "ARL2-SNX15", "RCC1L", "CDCA3", "P3H3")
 # these are all the noncoding hits with a corresponding coding hit.
-genes_include <- c("GOT2", "SAMD9L", "ARL2", "ARL2-SNX15", "P3H3")
-
+#genes_include <- c("GOT2", "SAMD9L", "ARL2", "ARL2-SNX15", "P3H3")
+# get all genes to include from the vntcol names
 colnms <- names(vntcols)
+genes_include <- sub("^has_vnt_in_([A-Za-z0-9]+).*", "\\1", colnms)
 
 # save new pheno files per gene
 for (gn in genes_include) {

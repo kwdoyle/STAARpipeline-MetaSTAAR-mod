@@ -47,6 +47,14 @@ colnames(sgrm) <- gsub("0_", "", colnames(sgrm))
 ###########################################################
 ## fit null model
 
+# New: check if any variables are all the same for all samples. If so, remove that variable.
+same_check <- unlist(lapply(phenotype, function(x) length(unique(x)) == 1))
+if (any(same_check)) {
+	rm_col <- names(which(same_check))
+	message("All values identical for ", rm_col, " -- omitting from model")
+	phenotype <- phenotype[, -which(names(phenotype) %in% rm_col)]
+}
+
 # new: dynamically create model formula using whichever 'has_vnt_in' columns are present
 fixed_covariates <- c("Age", "Sex", paste0("PC", 1:10))
 vnt_cols <- grep("^has_vnt_in_", names(phenotype), value = TRUE)
