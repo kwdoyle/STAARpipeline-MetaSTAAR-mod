@@ -12,7 +12,9 @@ resdir <- commandArgs(TRUE)[2]
 outdirnm <- commandArgs(TRUE)[3]
 afthresh <- as.numeric(commandArgs(TRUE)[4])
 variant_type <- commandArgs(TRUE)[5]
-nullmodeldir <- commandArgs(TRUE)[6]
+#nullmodeldir <- commandArgs(TRUE)[6]
+# just hard code the null model dir in these scripts.
+nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
 
 # For testing: (eventually will be passed to this script like the others in staar_wrapper.sh)
 #basedir="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/"
