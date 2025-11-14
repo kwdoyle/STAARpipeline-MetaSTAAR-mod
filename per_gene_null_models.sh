@@ -3,7 +3,8 @@
 scriptdir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/STAARpipeline-MetaSTAAR-mod/
 basedir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/
 # directory with pheno files
-indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models
+#indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models
+indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models
 
 #sgrmfile=${dir_geno}"/GRM/output/10k_chr_all.sparseGRM.sGRM.RData"
 #sgrmfile=${dir_geno}"/GRM/output/topmed_chr_all.sparseGRM.sGRM.RData"

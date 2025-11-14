@@ -1,23 +1,25 @@
 library(SeqArray)
 
 #vntfl <- "~/MetaSTAAR_discovery_topmed_noncoding_gene_hit_variants_onlysig.xlsx"
-vntfl <- "~/noncoding_variants_for_the_16_genes.xlsx"
+#vntfl <- "~/noncoding_variants_for_the_16_genes.xlsx"
+vntfl <- "~/coding_variants_for_the_16_genes.xlsx"
 
 
 #basedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/10k_Cohort_rm_telo_qv/"
-##savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Coding_variant_gt_matrices/"
-#savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Noncoding_variant_gt_matrices/"
+#savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Coding_variant_gt_matrices/"
+##savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/Discovery/Gene_Centric_Noncoding_variant_gt_matrices/"
 #nullmodelfl <- paste0(basedir, "/staar_null_model/obj_nullmodel_All_rm_qv.Rdata")  # To get sample IDs
 
 basedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/TOPMed_Full_Cohort_grm/"
-#savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Coding_variant_gt_matrices/"
-savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Noncoding_variant_gt_matrices/"
+savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Coding_variant_gt_matrices/"
+#savedir <- "~/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/TOPMed/Gene_Centric_Noncoding_variant_gt_matrices/"
 nullmodelfl <- paste0(basedir, "/staar_null_model/obj_nullmodel.Rdata") # To get sample IDs
 
 message("Using:")
 message("basedir: ", basedir)
 message("savedir: ", savedir)
 message("null model: ", nullmodelfl)
+message("variant file: ", vntfl)
 
 dir.create(savedir, showWarnings = F, recursive = T)
 
