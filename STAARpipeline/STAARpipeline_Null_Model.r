@@ -16,6 +16,37 @@ library(STAARpipeline)
 ###########################################################
 #           User Input
 ###########################################################
+# If two covariates are virtually the same, remove one of them
+detect_colinear_vars <- function(data, threshold = 0.99) {  
+  # Select only numeric/binary columns  
+  numeric_cols <- sapply(data, function(x) is.numeric(x) || all(x %in% c(0, 1, NA)))  
+  data_numeric <- data[, numeric_cols, drop = FALSE]  
+    
+  # Calculate correlation matrix  
+  cor_matrix <- cor(data_numeric, use = "pairwise.complete.obs")  
+    
+  # Find pairs with correlation above threshold  
+  cor_matrix[lower.tri(cor_matrix, diag = TRUE)] <- 0  
+  high_cor <- which(abs(cor_matrix) > threshold, arr.ind = TRUE)  
+    
+  if (nrow(high_cor) == 0) {  
+    return(list(to_remove = character(0), pairs = data.frame()))  
+  }  
+    
+  # Create pairs dataframe  
+  pairs_df <- data.frame(  
+    var1 = rownames(cor_matrix)[high_cor[, 1]],  
+    var2 = colnames(cor_matrix)[high_cor[, 2]],  
+    correlation = cor_matrix[high_cor],  
+    stringsAsFactors = FALSE  
+  )  
+    
+  # Identify variables to remove (keep first occurrence)  
+  to_remove <- unique(pairs_df$var2)  
+    
+  return(list(to_remove = to_remove, pairs = pairs_df))  
+}  
+
 ## Phenotype file
 #phenotype <- read.csv("/home/STAAR/TOPMed_Full_Cohort/topmed_input_model_data_cleaned.csv")
 ## (sparse) GRM file
@@ -53,6 +84,13 @@ if (any(same_check)) {
 	rm_col <- names(which(same_check))
 	message("All values identical for ", rm_col, " -- omitting from model")
 	phenotype <- phenotype[, -which(names(phenotype) %in% rm_col)]
+}
+
+# check for colinear terms
+colin_chk <- detect_colinear_vars(phenotype, threshold=0.95)
+if (length(colin_chk$to_remove) > 0) {  
+	message("Colinear variables found; removing ", colin_chk$to_remove)
+	phenotype <- phenotype[, -which(names(phenotype) %in% colin_chk$to_remove)]
 }
 
 # new: dynamically create model formula using whichever 'has_vnt_in' columns are present
