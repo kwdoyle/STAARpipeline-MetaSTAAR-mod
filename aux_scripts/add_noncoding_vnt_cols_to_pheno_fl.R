@@ -5,12 +5,32 @@ library(dplyr)
 # from MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx
 # where in_coding_and_noncoding is TRUE
 
-#phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/discovery_cohort_844_controls_rm_telo_gene_carriers_input_model_data.csv"
-#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_discovery.csv", row.names=1)
-phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//TOPMed_Full_Cohort_grm/topmed_input_model_data_rv_rm.csv"
-vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_topmed.csv", row.names=1)
+to_process <- "coding"  # "noncoding"
+cohort <- "topmed"  # "discovery" "topmed"
 
-savedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+if (cohort == "discovery") {
+	message("processing discovery")
+	phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/discovery_cohort_844_controls_rm_telo_gene_carriers_input_model_data.csv"
+	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_discovery.csv"), row.names=1)
+
+} else if (cohort == "topmed") {
+	message("processing topmed")
+	phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//TOPMed_Full_Cohort_grm/topmed_input_model_data_rv_rm.csv"
+	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_topmed.csv"), row.names=1)
+} else {
+	stop("incorrect cohort specified.")
+}
+
+savedir <- paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/", to_process, "_gene_vnt_null_models/")
+
+#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_discovery.csv", row.names=1)
+#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_coding_variants_discovery.csv", row.names=1)
+
+#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_topmed.csv", row.names=1)
+#vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_coding_variants_topmed.csv", row.names=1)
+
+#savedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+#savedir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models/"
 dir.create(savedir, showWarnings=F)
 
 phen <- read.csv(phenfl)
@@ -43,7 +63,8 @@ for (gn in genes_include) {
 	# new outfile name
 	phensavenm1 <- basename(phenfl)
 	phensavenm2 <- gsub(".csv", "", phensavenm1)
-	phensavenm3 <- paste0(phensavenm2, "_w_", gn, "_noncoding.csv")
+	phensavenm3 <- paste0(phensavenm2, "_w_", gn, "_", to_process, ".csv")
+	#phensavenm3 <- paste0(phensavenm2, "_w_", gn, "_noncoding.csv")
 	phensavenm4 <- paste0(savedir, phensavenm3)
 
 	message("Saving ", phensavenm4)
