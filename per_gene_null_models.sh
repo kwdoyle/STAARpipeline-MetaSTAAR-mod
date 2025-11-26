@@ -4,7 +4,9 @@ scriptdir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/STAARpipeline-MetaSTAAR-
 basedir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/
 # directory with pheno files
 #indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models
-indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models
+indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models_w_c1q
+#indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models
+#indir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models_w_c1q
 
 #sgrmfile=${dir_geno}"/GRM/output/10k_chr_all.sparseGRM.sGRM.RData"
 #sgrmfile=${dir_geno}"/GRM/output/topmed_chr_all.sparseGRM.sGRM.RData"
@@ -38,7 +40,6 @@ for file in "$indir"/*.csv; do
 	echo
 
 	# run null model staar script
-	# TODO this script needs to auto-set the parameters to use in the model based off the phenofile's columns
 	Rscript ${scriptdir}/STAARpipeline/STAARpipeline_Null_Model.r ${phenofile} ${null_model_fl} ${sgrmfile}
 
 done

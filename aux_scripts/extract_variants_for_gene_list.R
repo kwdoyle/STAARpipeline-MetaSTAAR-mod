@@ -18,11 +18,17 @@ dir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed
 
 genes_to_extract_df <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
 genes <- unique(genes_to_extract_df$Gene.name)
+# For coding genes, add C1QB to this
+#genes <- c(genes, "C1QB")
+# For noncoding, add C1QA and C1QC
+genes <- c(genes, "C1QA", "C1QC")
 
 sumstatfls <- list.files(dir, pattern="*sumstat*", full.names=T)
 savenm <- gsub("_sumstat_[0-9]+\\.Rdata$", "", basename(sumstatfls[1]))
 #savenm <- paste0(savenm, "_sumstat_for_extracted_genes_update.Rdata")
-savenm <- paste0(savenm, "_sumstat_for_16_coding_w_noncoding_genes.Rdata")
+#savenm <- paste0(savenm, "_sumstat_for_16_coding_w_noncoding_genes.Rdata")
+#savenm <- paste0(savenm, "_sumstat_for_16_coding_w_noncoding_genes_w_C1QB.Rdata")
+savenm <- paste0(savenm, "_sumstat_for_16_coding_w_noncoding_genes_w_C1QA_C1QC.Rdata")
 savedir <- paste0(dir, "/extracted_gene_output/")
 dir.create(savedir, showWarnings=F)
 savenm_full <- paste0(savedir,  savenm)
