@@ -13,7 +13,9 @@ afthresh <- as.numeric(commandArgs(TRUE)[4])
 variant_type <- commandArgs(TRUE)[5]
 #nullmodeldir <- commandArgs(TRUE)[6]
 # just hard code the null model dir in these scripts.
-nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models/"
+#nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models/"
+# for conditioning C1QA and C1QC on C1QB synonymous
+nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/coding_gene_vnt_null_models_w_c1q/"
 
 
 nullmodelfls <- list.files(nullmodeldir, pattern="*nullmodel.Rdata", full.names=T)
@@ -29,7 +31,10 @@ if (grepl("discovery", basename(resdir), ignore.case=T)) {
 }
 
 
-hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
+#hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
+# note: when C1QA and C1QB are analyzed, use the C1QB coding has_vnt data
+# and skip C1QB as a gene to analyze by itself
+hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/18_coding_hits_w_noncoding_w_c1q.csv")
 hits_use <- hits
 # only need gene and chr
 # Note: ALR2-SNX15 isn't tested here b/c specifically for SNX15, there is no corresponding coding and noncoding hit together.
@@ -69,13 +74,26 @@ for (i in 1:nrow(hits_use_tbl)) {
 	chr <- hits_use_tbl$Chr[i]
 	gene_name <- hits_use_tbl$Gene.name[i]
 	print(paste(gene_name, "Chr:",  chr, sep=" "))
+	if (gene_name == "C1QB") {
+		print("Skipping.")
+		next
+	} else if (gene_name %in% c("C1QA", "C1QC")) {
+	   	print("Cond on C1QB")
+		nm_gn_use <- "C1QB"
+	} else if (gene_name == "P3H3") {
+		print("Cond on CDCA3")
+		nm_gn_use <- "CDCA3"
+	} else {
+		nm_gn_use <- gene_name
+	}
+
 	# genes_info is a built-in data frame from STAAR
 	#genes_info_chr <- genes_info[genes_info[,2]==chr,]
 	# can just subset for current gene instead
 	genes_info_gn <- genes_info[genes_info$hgnc_symbol == gene_name, ]
 
 	# get null model for current gene
-	null_model_gn <- grep(paste0("_", gene_name, "_"), nullmodelfls, value=T)
+	null_model_gn <- grep(paste0("_", nm_gn_use, "_"), nullmodelfls, value=T)
 	print(paste("Using null model:", null_model_gn))
 	obj_nullmodel <- get(load(paste0(null_model_gn))) 
 

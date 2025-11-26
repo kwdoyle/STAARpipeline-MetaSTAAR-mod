@@ -14,7 +14,9 @@ afthresh <- as.numeric(commandArgs(TRUE)[4])
 variant_type <- commandArgs(TRUE)[5]
 #nullmodeldir <- commandArgs(TRUE)[6]
 # just hard code the null model dir in these scripts.
-nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+#nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models/"
+# for conditioning C1QB synonymous on C1QA and C1QC 
+nullmodeldir <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/noncoding_gene_vnt_null_models_w_c1q/"
 
 # For testing: (eventually will be passed to this script like the others in staar_wrapper.sh)
 #basedir="~/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/"
@@ -42,7 +44,8 @@ if (grepl("discovery", basename(resdir), ignore.case=T)) {
 # eventually use all genes from here with in_coding_and_noncoding = TRUE
 # note: not sure how sheet 2 is different; don't know what christine did to make this sheet
 #hits <- readxl::read_xlsx("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx", sheet=1)
-hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
+#hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/16_coding_hits_w_noncoding.csv")
+hits <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/18_coding_hits_w_noncoding_w_c1q.csv")
 # this has 795 genes. Will need to limit this down somehow (whatever was done to make sheet 2?)
 #hits_use <- hits[hits$in_coding_and_noncoding == TRUE, ]
 # for now, just select the main ones I'm working with
@@ -54,6 +57,8 @@ hits_use <- hits
 # only need gene and chr
 # Note: ALR2-SNX15 isn't tested here b/c specifically for SNX15, there is no corresponding coding and noncoding hit together.
 hits_use_tbl <- unique(hits_use[,c("Gene.name", "Chr")])
+# add a second C1QB so that I cond on C1QA and C1QC
+hits_use_tbl <- rbind(hits_use_tbl, hits_use_tbl[which(hits_use_tbl$Gene.name == "C1QB"), ])
 
 
 agds_dir <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/agds_dir.Rdata")))
@@ -85,17 +90,41 @@ print(paste("Output file name is", output_file_name))
 # # Main function
 coding_sumstat <- list()
 coding_cov <- list()
+# indicator for if I analyzed the first C1QB
+ran_1st_c1qb <- FALSE
 for (i in 1:nrow(hits_use_tbl)) {
 	chr <- hits_use_tbl$Chr[i]
 	gene_name <- hits_use_tbl$Gene.name[i]
 	print(paste(gene_name, "Chr:",  chr, sep=" "))
+	if (gene_name == "C1QB") {
+		if (ran_1st_c1qb) {
+			print("Cond on C1QC")
+			nm_gn_use <- "C1QC"
+			savenm <- paste(gene_name, "on", nm_gn_use, sep="_")
+		} else {
+			print("Cond on C1QA")
+			nm_gn_use <- "C1QA"
+			savenm <- paste(gene_name, "on", nm_gn_use, sep="_")
+			ran_1st_c1qb <- TRUE
+		}
+	} else if (gene_name %in% c("C1QA", "C1QC")) {
+	   	print("Skipping")
+		next
+	} else {
+		nm_gn_use <- gene_name
+		savenm <- gene_name
+	}
+
+#	} else if (gene_name == "P3H3") {
+#		print("Cond on CDCA3")
+#		nm_gn_use <- "CDCA3"
 	# genes_info is a built-in data frame from STAAR
 	#genes_info_chr <- genes_info[genes_info[,2]==chr,]
 	# can just subset for current gene instead
 	genes_info_gn <- genes_info[genes_info$hgnc_symbol == gene_name, ]
 
 	# get null model for current gene
-	null_model_gn <- grep(paste0("_", gene_name, "_"), nullmodelfls, value=T)
+	null_model_gn <- grep(paste0("_", nm_gn_use, "_"), nullmodelfls, value=T)
 	print(paste("Using null model:", null_model_gn))
 	obj_nullmodel <- get(load(paste0(null_model_gn))) 
 
@@ -109,8 +138,8 @@ for (i in 1:nrow(hits_use_tbl)) {
 					      Annotation_dir=Annotation_dir, Annotation_name_catalog=Annotation_name_catalog,
 					      Use_annotation_weights=Use_annotation_weights, Annotation_name=Annotation_name)
 
-	coding_sumstat[[gene_name]] <- results_temp$summary_stat_list
-	coding_cov[[gene_name]] <- results_temp$GTSinvG_rare_list
+	coding_sumstat[[savenm]] <- results_temp$summary_stat_list
+	coding_cov[[savenm]] <- results_temp$GTSinvG_rare_list
 
 	seqClose(genofile)
 }
