@@ -5,23 +5,24 @@ library(dplyr)
 # from MetaSTAAR_discovery_topmed_noncoding_and_coding_all_hits_metastaar_o_less_0_05_ckg.xlsx
 # where in_coding_and_noncoding is TRUE
 
-to_process <- "coding"  # "noncoding"
+to_process <- "noncoding"  # "noncoding"
 cohort <- "topmed"  # "discovery" "topmed"
 
 if (cohort == "discovery") {
 	message("processing discovery")
 	phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//10k_Cohort_rm_telo_qv/discovery_cohort_844_controls_rm_telo_gene_carriers_input_model_data.csv"
-	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_discovery.csv"), row.names=1)
+	# NOTE: modified path to use the "w_c1q" output for coding genes. there is no "w_c1q" file when to_process is 'noncoding'
+	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_w_c1q_discovery.csv"), row.names=1)
 
 } else if (cohort == "topmed") {
 	message("processing topmed")
 	phenfl <- "/efs/garcia/users/kd2630/noncoding_telo/STAAR//TOPMed_Full_Cohort_grm/topmed_input_model_data_rv_rm.csv"
-	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_topmed.csv"), row.names=1)
+	vntcols <- read.csv(paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_", to_process, "_variants_w_c1q_topmed.csv"), row.names=1)
 } else {
 	stop("incorrect cohort specified.")
 }
 
-savedir <- paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/", to_process, "_gene_vnt_null_models/")
+savedir <- paste0("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/", to_process, "_gene_vnt_null_models_w_c1q/")
 
 #vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_noncoding_variants_discovery.csv", row.names=1)
 #vntcols <- read.csv("/efs/garcia/users/kd2630/noncoding_telo/STAAR/MetaSTAAR_Discovery_TOPMed/has_coding_variants_discovery.csv", row.names=1)
