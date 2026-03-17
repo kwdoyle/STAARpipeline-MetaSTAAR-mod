@@ -79,5 +79,9 @@ add.gdsn(Anno.folder, "FunctionalAnnotation", val=FunctionalAnnotation, compress
 
 seqClose(genofile)
 
-system(paste0("aws s3 cp ", gds.path.local, " ",  gsub("/mnt/", "s3://", gds.path)))
+# remove extra slashes in command so that aws copies to correct location
+# (and doesn't make stupid '/' directoires WITHIN a directory)
+cmd <- paste0("aws s3 cp ", gds.path.local, " ",  gsub("/mnt/", "s3://", gds.path))
+cmd_clean <- gsub("(?<!:)//+", "/", cmd, perl = TRUE)
+system(cmd_clean)
 

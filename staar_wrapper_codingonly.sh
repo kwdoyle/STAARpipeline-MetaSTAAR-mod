@@ -1,19 +1,22 @@
+#!/bin/bash
+
 # This script is submitted via the 'batch job' scripts
 # and accepts the job id and which step of the pipeline to run as arguments
 arrid=$2
 cohort_analyze=discovery  # topmed  # discovery
 
 # Path to this directory
-scriptdir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/STAARpipeline-MetaSTAAR-mod/
+scriptdir=/home/kd2630/STAARpipeline-MetaSTAAR-mod
 source ${scriptdir}/makeenv2.sh
 # Base directory where all output data will reside
-basedir=/efs/garcia/users/kd2630/noncoding_telo/STAAR/
+basedir=/mnt/cuimc-med-pulm-general/STAAR/
+#basedir=/home/kd2630/STAAR_10k/
 # Specific sub-folder, pertaining to the current cohort being analyzed
 #
 if [[ $cohort_analyze == "discovery" ]]; then
 	filesdir=/10k_Cohort_codingonly/
 	subdir=""
-	vcfdir=/efs/garcia/users/kd2630/cuimc-med-pulm-general/vcfs/10k_hg38/samples_to_keep/GENCODE_coding_subset_100bp_exon_flank/
+	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/10k_hg38/samples_to_keep/GENCODE_coding_subset_100bp_exon_flank/
 	input_vcf_name_1=gencode.coding.curegn.wgs.freeze.2a.chr
 	input_vcf_name_2=.hg38.filtered.samp.list.pruned.vcf.gz
 	gds_file_name_1="10k_coding_chr_"
@@ -21,7 +24,9 @@ if [[ $cohort_analyze == "discovery" ]]; then
 elif [[ $cohort_analyze == "topmed" ]]; then
 	filesdir=/TOPMed_codingonly/
 	subdir=""
-	vcfdir=/efs/garcia/users/kd2630/cuimc-med-pulm-general/vcfs/topmed_full_concat/GENCODE_coding_subset_100bp_exon_flank/
+	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/topmed_full_concat/GENCODE_coding_subset_100bp_exon_flank/
+	input_vcf_name_1=gencode.coding.topmed_chr
+	input_vcf_name_2=.vcf.gz
 	gds_file_name_1="topmed_coding_chr_"
 	gds_file_name_2=".gds"
 else 
@@ -43,12 +48,14 @@ res_savedir=${basedir}/${savedir}${subdir}
 format_convert_to_gds=vcf
 af_thresh=0.01
 mac_cutoff=20
-var_type=variant  # SNV  # Indel
+var_type=SNV  # SNV  # Indel
 
 variant_output_path=${dir_geno}"/VariantInfo"
-xsv="/efs/garcia/users/kd2630/.cargo/bin/xsv"
+xsv="/home/kd2630/.cargo/bin/xsv"
 # TODO this needs to change to the S3 location
-favor_path=${basedir}"/FAVORDB/"
+#favor_path=${basedir}"/FAVORDB/"
+# for testing with chr22
+favor_path=/mnt/cuimc-med-pulm-general/tmp/
 
 prestep_out=${dir_geno}/"/AssociationAnalysisPrestep/"
 
@@ -76,7 +83,7 @@ slidwindir=/Sliding_Window_Analysis/
 dynamwindir=Dynamic_Window_Analysis/
 
 
-echo For project $savedir
+echo For project $dir_geno #$savedir
 
 # # Setup (These are run via 'run_staar_wrapper.sh')
 # create gds files
@@ -86,19 +93,19 @@ if [[ $1 == "gds" ]]; then
 	echo Creating GDS file for chrom $arrid
 	inputvcf=${vcfdir}/${input_vcf_name_1}${arrid}${input_vcf_name_2}
 	echo $inputvcf
-	Rscript ${scriptdir}/STAARpipeline/convertVCF2GDS.R NULL ${format_convert_to_gds} ${dir_geno}/${gds_file_name_1}${arrid} 1 ${inputvcf}
+	Rscript ${scriptdir}/STAARpipeline/convertVCF2GDS.R NULL ${format_convert_to_gds} ${dir_geno}/${gds_file_name_1}${arrid} 1 ${inputvcf} ${filesdir}
 fi
 
 # create variant list files
 if [[ $1 == "listVariants" ]]; then
 	echo Creating variant lists for chrom $arrid
-	Rscript ${scriptdir}/STAARpipeline/FAVORannotator_csv/Varinfo_gds.R ${arrid} ${dir_geno} ${gds_file_name_1} ${gds_file_name_2} ${variant_output_path} ${scriptdir}
+	Rscript ${scriptdir}/STAARpipeline/FAVORannotator_csv/Varinfo_gds.R ${arrid} ${dir_geno} ${gds_file_name_1} ${gds_file_name_2} ${variant_output_path} ${scriptdir}/STAARpipeline/
 fi
 
 # annotate variants
 if [[ $1 == "annotateVariants" ]]; then
-	echo Annotating variants for chrom $arrid
-	Rscript ${scriptdir}/STAARpipeline/FAVORannotator_csv/Annotate.R ${arrid} ${xsv} ${variant_output_path} ${favor_path} ${scriptdir}
+	echo Annotating variants for chrom $arrid and including AlphaMissense
+	Rscript ${scriptdir}/STAARpipeline/FAVORannotator_csv/Annotate_mod.R ${arrid} ${xsv} ${variant_output_path} ${favor_path} ${scriptdir}/STAARpipeline/
 fi
 
 # annotate gds files
