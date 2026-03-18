@@ -1,15 +1,37 @@
 #!/bin/bash
 
+type=topmed  #topmed  #discovery
+if [[ $type == "discovery" ]]; then
+	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/10k_hg38/samples_to_keep/GENCODE_coding_subset_100bp_exon_flank/annotated_vep115/
+	#vcfdir=/home/kd2630/tmp/
+	vcf1=anno.gencode.coding.curegn.wgs.freeze.2a.chr
+	vcf2=.hg38.filtered.samp.list.pruned.vcf.gz
+	outdir=/mnt/tmpstore/10k_Cohort_codingonly/
+elif [[ $type == "topmed" ]]; then
+	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/topmed_full_concat/GENCODE_coding_subset_100bp_exon_flank/annotated_vep115/
+	vcf1=anno.gencode.coding.topmed_chr
+	vcf2=.vcf.gz
+	outdir=/mnt/tmpstore/TOPMed_codingonly/
+fi
+
+echo $vcfdir
+echo ${vcf1}CHROM${vcf2}
+echo $outdir
+
+mkdir -p $outdir
+
 #vcfnm=anno.gencode.coding.curegn.wgs.freeze.2a.chr22.hg38.filtered.samp.list.pruned.vcf.gz
 for chr in {1..22}; do
 	echo $chr
 
-	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/10k_hg38/samples_to_keep/GENCODE_coding_subset_100bp_exon_flank/annotated_vep115/
-	vcfnm=anno.gencode.coding.curegn.wgs.freeze.2a.chr${chr}.hg38.filtered.samp.list.pruned.vcf.gz
-	vcfl=${vcfdir}/${vcfnm}
+#	vcfdir=/mnt/cuimc-med-pulm-general/vcfs/10k_hg38/samples_to_keep/GENCODE_coding_subset_100bp_exon_flank/annotated_vep115/
+#	vcfnm=anno.gencode.coding.curegn.wgs.freeze.2a.chr${chr}.hg38.filtered.samp.list.pruned.vcf.gz
+#	vcfl=${vcfdir}/${vcfnm}
+
+	vcfl=${vcfdir}/${vcf1}${chr}${vcf2}
 
 	#outdir=~/STAAR_10k/10k_Cohort_codingonly/
-	outdir=/mnt/tmpstore/10k_Cohort_codingonly/
+	#outdir=/mnt/tmpstore/10k_Cohort_codingonly/
 
 	# %AlphaMissense_pred %AlphaMissense_rankscore
 
